@@ -193,14 +193,10 @@ const Intel = () => {
     <div className="h-screen relative overflow-hidden">
       {/* Fixed Map Background - Draggable */}
       {!loading && locationData ? (
-        <>
-          <div 
-            ref={mapRef}
-            className="fixed inset-0 z-0"
-          />
-          {/* Dark overlay but allow map interaction */}
-          <div className="fixed inset-0 z-[1] bg-background/40 backdrop-blur-[2px] pointer-events-none" />
-        </>
+        <div 
+          ref={mapRef}
+          className="fixed inset-0 z-0"
+        />
       ) : (
         <div className="fixed inset-0 z-0 bg-gradient-to-br from-background via-background to-primary/5" />
       )}
