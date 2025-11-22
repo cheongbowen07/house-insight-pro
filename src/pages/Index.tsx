@@ -6,8 +6,10 @@ import BillingList from "@/components/BillingList";
 import TotalSummary from "@/components/TotalSummary";
 import NotificationSettings from "@/components/NotificationSettings";
 import { notifyNewInspection, notifyHighPriorityIssue } from "@/lib/notifications";
+import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 
 const Index = () => {
+  const { preferences } = useNotificationPreferences();
   const [showResults, setShowResults] = useState(false);
   const [inspectionData, setInspectionData] = useState({
     address: "",
@@ -19,13 +21,13 @@ const Index = () => {
     setShowResults(true);
     
     // Send notification for new inspection
-    notifyNewInspection(data.address);
+    notifyNewInspection(data.address, preferences.newInspections);
     
     // Notify about high priority issues after a brief delay
     setTimeout(() => {
       const highPriorityItems = billingItems.filter(item => item.severity === 'high');
       highPriorityItems.forEach(item => {
-        notifyHighPriorityIssue(item.issue, item.cost);
+        notifyHighPriorityIssue(item.issue, item.cost, preferences.highPriorityIssues);
       });
     }, 2000);
   };

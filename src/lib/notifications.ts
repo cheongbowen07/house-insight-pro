@@ -34,7 +34,8 @@ export const sendNotification = (title: string, options?: NotificationOptions) =
   return null;
 };
 
-export const notifyNewInspection = (address: string) => {
+export const notifyNewInspection = (address: string, enabled: boolean = true) => {
+  if (!enabled) return;
   sendNotification('New Inspection Scheduled', {
     body: `Property inspection scheduled at ${address}`,
     tag: 'inspection',
@@ -42,7 +43,8 @@ export const notifyNewInspection = (address: string) => {
   });
 };
 
-export const notifyInspectionUpdate = (address: string, message: string) => {
+export const notifyInspectionUpdate = (address: string, message: string, enabled: boolean = true) => {
+  if (!enabled) return;
   sendNotification('Inspection Update', {
     body: `${address}: ${message}`,
     tag: 'inspection-update',
@@ -50,7 +52,8 @@ export const notifyInspectionUpdate = (address: string, message: string) => {
   });
 };
 
-export const notifyHighPriorityIssue = (issue: string, cost: number) => {
+export const notifyHighPriorityIssue = (issue: string, cost: number, enabled: boolean = true) => {
+  if (!enabled) return;
   sendNotification('High Priority Issue Found', {
     body: `${issue} - Est. Cost: $${cost.toLocaleString()}`,
     tag: 'high-priority',
