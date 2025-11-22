@@ -113,46 +113,36 @@ const Intel = () => {
     }
   }, [address]);
 
-  // Initialize Leaflet map
+  // Initialize Leaflet map as background (non-interactive)
   useEffect(() => {
     if (!locationData || !mapRef.current || mapInstanceRef.current) return;
 
     const lat = parseFloat(locationData.lat);
     const lon = parseFloat(locationData.lon);
 
-    // Create map
+    // Create map (non-interactive)
     const map = L.map(mapRef.current, {
       center: [lat, lon],
-      zoom: 16,
-      zoomControl: true,
-      scrollWheelZoom: true,
+      zoom: 15,
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      touchZoom: false,
     });
 
     mapInstanceRef.current = map;
 
-    // Add tile layer
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    // Add tile layer with darker styling
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       maxZoom: 19,
-    }).addTo(map);
-
-    // Add circle radius
-    L.circle([lat, lon], {
-      radius: 100,
-      color: "hsl(210, 100%, 50%)",
-      fillColor: "hsl(210, 100%, 50%)",
-      fillOpacity: 0.1,
-      weight: 2,
     }).addTo(map);
 
     // Add marker
     const marker = L.marker([lat, lon]).addTo(map);
-    marker.bindPopup(`
-      <div style="font-size: 14px;">
-        <p style="font-weight: 600; margin-bottom: 4px;">Target Location</p>
-        <p style="font-size: 12px; color: #666;">${locationData.display_name}</p>
-      </div>
-    `);
 
     // Cleanup
     return () => {
@@ -207,7 +197,21 @@ const Intel = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Fixed Map Background - Non-interactive */}
+      {!loading && locationData ? (
+        <>
+          <div 
+            ref={mapRef}
+            className="fixed inset-0 z-0"
+          />
+          {/* Dark overlay */}
+          <div className="fixed inset-0 z-[1] bg-background/80 backdrop-blur-sm" />
+        </>
+      ) : (
+        <div className="fixed inset-0 z-0 bg-gradient-to-br from-background via-background to-primary/5" />
+      )}
+
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-card/95 backdrop-blur-xl">
         <div className="container max-w-7xl mx-auto px-4 py-4">
@@ -230,147 +234,88 @@ const Intel = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        {/* Target Info */}
-        <div className="mb-6">
-          <div className="flex items-start gap-3 mb-2">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Home className="h-5 w-5 text-primary" />
+      {/* Main Content Card - Overlaying Map */}
+      <main className="relative z-10 container max-w-5xl mx-auto px-4 py-6 sm:py-8">
+        <div className="bg-card/95 backdrop-blur-xl rounded-2xl border border-border shadow-[var(--shadow-elevated)] overflow-hidden">
+          {/* Target Info Header */}
+          <div className="p-6 sm:p-8 border-b border-border/50">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Home className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-1">Target Property</h1>
+                <p className="text-sm sm:text-base text-muted-foreground font-mono-data">
+                  {address}
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl sm:text-3xl font-bold mb-1">Target Property</h1>
-              <p className="text-sm sm:text-base text-muted-foreground font-mono-data">
-                {address}
-              </p>
+
+            {/* Location Details */}
+            {locationData?.address && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                {locationData.address.road && (
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Street</p>
+                    <p className="text-sm font-medium">{locationData.address.road}</p>
+                  </div>
+                )}
+                {locationData.address.suburb && (
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Area</p>
+                    <p className="text-sm font-medium">{locationData.address.suburb}</p>
+                  </div>
+                )}
+                {locationData.address.city && (
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">City</p>
+                    <p className="text-sm font-medium">{locationData.address.city}</p>
+                  </div>
+                )}
+                {locationData.address.postcode && (
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Postcode</p>
+                    <p className="text-sm font-mono-data">{locationData.address.postcode}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {locationData && (
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Coordinates</p>
+                <p className="text-xs font-mono-data text-primary">
+                  {parseFloat(locationData.lat).toFixed(6)}, {parseFloat(locationData.lon).toFixed(6)}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 sm:p-8 bg-muted/20">
+            <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Issues Detected</p>
+              <p className="text-3xl font-bold font-mono-data">{billingItems.length}</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Estimated Cost</p>
+              <p className="text-3xl font-bold font-mono-data">£{totalCost.toLocaleString()}</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-card border border-border hover:border-destructive/50 transition-colors">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Risk Score</p>
+              <p className="text-3xl font-bold font-mono-data text-destructive">{avgRisk}/10</p>
             </div>
           </div>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <Card className="border-t-4 border-t-primary hover:border-t-foreground transition-colors">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs uppercase tracking-wider">Issues Detected</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold font-mono-data">{billingItems.length}</p>
-            </CardContent>
-          </Card>
+          {/* Issues List */}
+          <div className="p-6 sm:p-8">
+            <div className="flex items-center gap-2 mb-6">
+              <AlertCircle className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Identified Issues</h2>
+            </div>
 
-          <Card className="border-t-4 border-t-primary hover:border-t-foreground transition-colors">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs uppercase tracking-wider">Estimated Cost</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold font-mono-data">£{totalCost.toLocaleString()}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-t-4 border-t-primary hover:border-t-foreground transition-colors">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-xs uppercase tracking-wider">Risk Score</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold font-mono-data text-destructive">{avgRisk}/10</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Map Section */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Navigation className="h-5 w-5 text-primary" />
-                <CardTitle>Tactical Map</CardTitle>
-              </div>
-              <CardDescription>
-                {locationData && (
-                  <span className="font-mono-data">
-                    {parseFloat(locationData.lat).toFixed(6)}, {parseFloat(locationData.lon).toFixed(6)}
-                  </span>
-                )}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="h-[400px] bg-muted rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-2" />
-                    <p className="text-sm text-muted-foreground">Loading map data...</p>
-                  </div>
-                </div>
-              ) : locationData ? (
-                <div 
-                  ref={mapRef}
-                  className="h-[400px] rounded-lg overflow-hidden border border-border"
-                  style={{ zIndex: 0 }}
-                />
-              ) : (
-                <div className="h-[400px] bg-muted rounded-lg flex items-center justify-center">
-                  <p className="text-muted-foreground">Unable to load location data</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Location Details */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                <CardTitle>Location Intel</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {locationData?.address && (
-                <>
-                  {locationData.address.road && (
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Street</p>
-                      <p className="text-sm font-medium">{locationData.address.road}</p>
-                    </div>
-                  )}
-                  {locationData.address.suburb && (
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Area</p>
-                      <p className="text-sm font-medium">{locationData.address.suburb}</p>
-                    </div>
-                  )}
-                  {locationData.address.city && (
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">City</p>
-                      <p className="text-sm font-medium">{locationData.address.city}</p>
-                    </div>
-                  )}
-                  {locationData.address.postcode && (
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Postcode</p>
-                      <p className="text-sm font-mono-data">{locationData.address.postcode}</p>
-                    </div>
-                  )}
-                </>
-              )}
-              {locationData && (
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Coordinates</p>
-                  <p className="text-xs font-mono-data break-all">
-                    {parseFloat(locationData.lat).toFixed(6)}, {parseFloat(locationData.lon).toFixed(6)}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Issues List */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Identified Issues</CardTitle>
-            <CardDescription>Comprehensive breakdown of detected problems</CardDescription>
-          </CardHeader>
-          <CardContent>
             <div className="space-y-3">
               {billingItems.map((item) => {
                 const config = getSeverityConfig(item.severity);
@@ -407,8 +352,8 @@ const Intel = () => {
                 );
               })}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </main>
     </div>
   );
