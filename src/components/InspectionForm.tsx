@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
 
@@ -64,105 +64,131 @@ const InspectionForm = ({ onSubmit }: InspectionFormProps) => {
               <SelectValue placeholder="Select your role" />
             </SelectTrigger>
             <SelectContent className="max-h-[400px]">
-              <SelectLabel>General / Project-Wide</SelectLabel>
-              <SelectItem value="general-contractor">General Contractor</SelectItem>
-              <SelectItem value="design-build-contractor">Design & Build Contractor</SelectItem>
-              <SelectItem value="project-manager">Project Manager / Construction Manager</SelectItem>
-              <SelectItem value="architect">Architect</SelectItem>
-              <SelectItem value="structural-engineer">Structural Engineer</SelectItem>
-              <SelectItem value="quantity-surveyor">Quantity Surveyor</SelectItem>
+              <SelectGroup>
+                <SelectLabel>General / Project-Wide</SelectLabel>
+                <SelectItem value="general-contractor">General Contractor</SelectItem>
+                <SelectItem value="design-build-contractor">Design & Build Contractor</SelectItem>
+                <SelectItem value="project-manager">Project Manager / Construction Manager</SelectItem>
+                <SelectItem value="architect">Architect</SelectItem>
+                <SelectItem value="structural-engineer">Structural Engineer</SelectItem>
+                <SelectItem value="quantity-surveyor">Quantity Surveyor</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Structural & Building</SelectLabel>
-              <SelectItem value="masonry-contractor">Masonry Contractor</SelectItem>
-              <SelectItem value="concrete-contractor">Concrete Contractor</SelectItem>
-              <SelectItem value="foundation-specialist">Foundation / Underpinning Specialist</SelectItem>
-              <SelectItem value="structural-steel">Structural Steel Contractor</SelectItem>
-              <SelectItem value="roofing-contractor">Roofing Contractor</SelectItem>
-              <SelectItem value="chimney-repair">Chimney Repair Contractor</SelectItem>
-              <SelectItem value="loft-conversion">Loft Conversion Specialist</SelectItem>
-              <SelectItem value="basement-conversion">Basement Conversion Specialist</SelectItem>
-              <SelectItem value="extension-builder">Extension Builder</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Structural & Building</SelectLabel>
+                <SelectItem value="masonry-contractor">Masonry Contractor</SelectItem>
+                <SelectItem value="concrete-contractor">Concrete Contractor</SelectItem>
+                <SelectItem value="foundation-specialist">Foundation / Underpinning Specialist</SelectItem>
+                <SelectItem value="structural-steel">Structural Steel Contractor</SelectItem>
+                <SelectItem value="roofing-contractor">Roofing Contractor</SelectItem>
+                <SelectItem value="chimney-repair">Chimney Repair Contractor</SelectItem>
+                <SelectItem value="loft-conversion">Loft Conversion Specialist</SelectItem>
+                <SelectItem value="basement-conversion">Basement Conversion Specialist</SelectItem>
+                <SelectItem value="extension-builder">Extension Builder</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Plumbing & Water Systems</SelectLabel>
-              <SelectItem value="plumber">Plumber</SelectItem>
-              <SelectItem value="gas-safe-engineer">Gas-Safe Engineer</SelectItem>
-              <SelectItem value="drainage-contractor">Drainage Contractor</SelectItem>
-              <SelectItem value="septic-tank">Septic Tank Contractor</SelectItem>
-              <SelectItem value="water-damage-restoration">Water Damage Restoration</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Plumbing & Water Systems</SelectLabel>
+                <SelectItem value="plumber">Plumber</SelectItem>
+                <SelectItem value="gas-safe-engineer">Gas-Safe Engineer</SelectItem>
+                <SelectItem value="drainage-contractor">Drainage Contractor</SelectItem>
+                <SelectItem value="septic-tank">Septic Tank Contractor</SelectItem>
+                <SelectItem value="water-damage-restoration">Water Damage Restoration</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Electrical & Energy</SelectLabel>
-              <SelectItem value="electrician">Electrician</SelectItem>
-              <SelectItem value="lighting-specialist">Lighting Installation Specialist</SelectItem>
-              <SelectItem value="solar-panel-installer">Solar Panel Installer</SelectItem>
-              <SelectItem value="smart-home-installer">Home Automation / Smart Home Installer</SelectItem>
-              <SelectItem value="hvac-installer">HVAC Installer / Heating & Cooling</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Electrical & Energy</SelectLabel>
+                <SelectItem value="electrician">Electrician</SelectItem>
+                <SelectItem value="lighting-specialist">Lighting Installation Specialist</SelectItem>
+                <SelectItem value="solar-panel-installer">Solar Panel Installer</SelectItem>
+                <SelectItem value="smart-home-installer">Home Automation / Smart Home Installer</SelectItem>
+                <SelectItem value="hvac-installer">HVAC Installer / Heating & Cooling</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Carpentry & Woodwork</SelectLabel>
-              <SelectItem value="finish-carpenter">Finish Carpenter</SelectItem>
-              <SelectItem value="framing-carpenter">Framing Carpenter</SelectItem>
-              <SelectItem value="cabinet-maker">Cabinet Maker</SelectItem>
-              <SelectItem value="joiner">Joiner</SelectItem>
-              <SelectItem value="decking-contractor">Decking Contractor</SelectItem>
-              <SelectItem value="door-window-fitter">Door & Window Fitter</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Carpentry & Woodwork</SelectLabel>
+                <SelectItem value="finish-carpenter">Finish Carpenter</SelectItem>
+                <SelectItem value="framing-carpenter">Framing Carpenter</SelectItem>
+                <SelectItem value="cabinet-maker">Cabinet Maker</SelectItem>
+                <SelectItem value="joiner">Joiner</SelectItem>
+                <SelectItem value="decking-contractor">Decking Contractor</SelectItem>
+                <SelectItem value="door-window-fitter">Door & Window Fitter</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Interior Finishes</SelectLabel>
-              <SelectItem value="drywall-contractor">Drywall Contractor</SelectItem>
-              <SelectItem value="plasterer">Plasterer</SelectItem>
-              <SelectItem value="painter-decorator">Painter & Decorator</SelectItem>
-              <SelectItem value="wallpaper-installer">Wallpaper Installer</SelectItem>
-              <SelectItem value="flooring-contractor">Flooring Contractor</SelectItem>
-              <SelectItem value="carpet-installer">Carpet Installer</SelectItem>
-              <SelectItem value="tiling-contractor">Tiling Contractor</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Interior Finishes</SelectLabel>
+                <SelectItem value="drywall-contractor">Drywall Contractor</SelectItem>
+                <SelectItem value="plasterer">Plasterer</SelectItem>
+                <SelectItem value="painter-decorator">Painter & Decorator</SelectItem>
+                <SelectItem value="wallpaper-installer">Wallpaper Installer</SelectItem>
+                <SelectItem value="flooring-contractor">Flooring Contractor</SelectItem>
+                <SelectItem value="carpet-installer">Carpet Installer</SelectItem>
+                <SelectItem value="tiling-contractor">Tiling Contractor</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Exterior Finishes</SelectLabel>
-              <SelectItem value="rendering-contractor">Rendering / Stucco Contractor</SelectItem>
-              <SelectItem value="exterior-painter">Exterior Painter</SelectItem>
-              <SelectItem value="siding-contractor">Siding/Cladding Contractor</SelectItem>
-              <SelectItem value="paving-contractor">Paving/Hardscaping Contractor</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Exterior Finishes</SelectLabel>
+                <SelectItem value="rendering-contractor">Rendering / Stucco Contractor</SelectItem>
+                <SelectItem value="exterior-painter">Exterior Painter</SelectItem>
+                <SelectItem value="siding-contractor">Siding/Cladding Contractor</SelectItem>
+                <SelectItem value="paving-contractor">Paving/Hardscaping Contractor</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Kitchen & Bathroom</SelectLabel>
-              <SelectItem value="kitchen-renovation">Kitchen Renovation Contractor</SelectItem>
-              <SelectItem value="bathroom-renovation">Bathroom Renovation Contractor</SelectItem>
-              <SelectItem value="wet-room-specialist">Wet Room Specialist</SelectItem>
-              <SelectItem value="countertop-fabricator">Countertop Fabricator</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Kitchen & Bathroom</SelectLabel>
+                <SelectItem value="kitchen-renovation">Kitchen Renovation Contractor</SelectItem>
+                <SelectItem value="bathroom-renovation">Bathroom Renovation Contractor</SelectItem>
+                <SelectItem value="wet-room-specialist">Wet Room Specialist</SelectItem>
+                <SelectItem value="countertop-fabricator">Countertop Fabricator</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Windows, Doors & Glass</SelectLabel>
-              <SelectItem value="glazier">Glazier</SelectItem>
-              <SelectItem value="window-replacement">Window Replacement Contractor</SelectItem>
-              <SelectItem value="upvc-door-installer">UPVC/Aluminium Door Installer</SelectItem>
-              <SelectItem value="skylight-installer">Skylight Installer</SelectItem>
-              <SelectItem value="shower-glass-installer">Shower Glass Installer</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Windows, Doors & Glass</SelectLabel>
+                <SelectItem value="glazier">Glazier</SelectItem>
+                <SelectItem value="window-replacement">Window Replacement Contractor</SelectItem>
+                <SelectItem value="upvc-door-installer">UPVC/Aluminium Door Installer</SelectItem>
+                <SelectItem value="skylight-installer">Skylight Installer</SelectItem>
+                <SelectItem value="shower-glass-installer">Shower Glass Installer</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Outdoor & Landscaping</SelectLabel>
-              <SelectItem value="landscaper">Landscaper</SelectItem>
-              <SelectItem value="gardener">Gardener</SelectItem>
-              <SelectItem value="tree-surgeon">Tree Surgeon / Arborist</SelectItem>
-              <SelectItem value="fence-contractor">Fence Contractor</SelectItem>
-              <SelectItem value="driveway-contractor">Driveway Contractor</SelectItem>
-              <SelectItem value="patio-contractor">Patio / Hardscaping Contractor</SelectItem>
-              <SelectItem value="lawn-irrigation">Lawn Irrigation Contractor</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Outdoor & Landscaping</SelectLabel>
+                <SelectItem value="landscaper">Landscaper</SelectItem>
+                <SelectItem value="gardener">Gardener</SelectItem>
+                <SelectItem value="tree-surgeon">Tree Surgeon / Arborist</SelectItem>
+                <SelectItem value="fence-contractor">Fence Contractor</SelectItem>
+                <SelectItem value="driveway-contractor">Driveway Contractor</SelectItem>
+                <SelectItem value="patio-contractor">Patio / Hardscaping Contractor</SelectItem>
+                <SelectItem value="lawn-irrigation">Lawn Irrigation Contractor</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Specialty Contractors</SelectLabel>
-              <SelectItem value="fireplace-installer">Fireplace Installer</SelectItem>
-              <SelectItem value="insulation-contractor">Insulation Contractor</SelectItem>
-              <SelectItem value="soundproofing-contractor">Soundproofing Contractor</SelectItem>
-              <SelectItem value="asbestos-removal">Asbestos Removal Contractor</SelectItem>
-              <SelectItem value="mould-remediation">Mould Remediation Specialist</SelectItem>
-              <SelectItem value="pest-control">Pest Control</SelectItem>
-              <SelectItem value="security-installer">Security System Installer</SelectItem>
-              <SelectItem value="home-theater-installer">Home Theater / AV Installer</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Specialty Contractors</SelectLabel>
+                <SelectItem value="fireplace-installer">Fireplace Installer</SelectItem>
+                <SelectItem value="insulation-contractor">Insulation Contractor</SelectItem>
+                <SelectItem value="soundproofing-contractor">Soundproofing Contractor</SelectItem>
+                <SelectItem value="asbestos-removal">Asbestos Removal Contractor</SelectItem>
+                <SelectItem value="mould-remediation">Mould Remediation Specialist</SelectItem>
+                <SelectItem value="pest-control">Pest Control</SelectItem>
+                <SelectItem value="security-installer">Security System Installer</SelectItem>
+                <SelectItem value="home-theater-installer">Home Theater / AV Installer</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Restoration & Damage Repair</SelectLabel>
-              <SelectItem value="fire-damage-restoration">Fire Damage Restoration</SelectItem>
-              <SelectItem value="flood-restoration">Flood Restoration</SelectItem>
-              <SelectItem value="smoke-odour-removal">Smoke & Odour Removal</SelectItem>
-              <SelectItem value="insurance-claim-contractor">Insurance Claim Contractor</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Restoration & Damage Repair</SelectLabel>
+                <SelectItem value="fire-damage-restoration">Fire Damage Restoration</SelectItem>
+                <SelectItem value="flood-restoration">Flood Restoration</SelectItem>
+                <SelectItem value="smoke-odour-removal">Smoke & Odour Removal</SelectItem>
+                <SelectItem value="insurance-claim-contractor">Insurance Claim Contractor</SelectItem>
+              </SelectGroup>
 
-              <SelectLabel>Maintenance & Cleaning</SelectLabel>
-              <SelectItem value="house-cleaner">House Cleaner</SelectItem>
-              <SelectItem value="window-cleaner">Window Cleaner</SelectItem>
-              <SelectItem value="gutter-cleaning">Gutter Cleaning Contractor</SelectItem>
-              <SelectItem value="pressure-washing">Pressure Washing Contractor</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Maintenance & Cleaning</SelectLabel>
+                <SelectItem value="house-cleaner">House Cleaner</SelectItem>
+                <SelectItem value="window-cleaner">Window Cleaner</SelectItem>
+                <SelectItem value="gutter-cleaning">Gutter Cleaning Contractor</SelectItem>
+                <SelectItem value="pressure-washing">Pressure Washing Contractor</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
