@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Search, Target, Database, Satellite } from "lucide-react";
 import AddressPicker from "@/components/AddressPicker";
+import ScanningAnimation from "@/components/ScanningAnimation";
 import { toast } from "sonner";
 
 const Landing = () => {
@@ -121,77 +122,94 @@ const Landing = () => {
             </div>
           </div>
         ) : (
-          // Scanning Animation
-          <div className="w-full max-w-2xl">
-            <div className="bg-card/95 backdrop-blur-xl rounded-2xl border border-primary/30 shadow-[var(--shadow-glow)] p-8 sm:p-12">
-              <div className="space-y-8">
-                <div className="text-center">
-                  <div className="inline-flex items-center gap-2 mb-4">
+          // Scanning Animation - WebGL Hacker Style
+          <div className="w-full max-w-4xl">
+            <div className="bg-card/95 backdrop-blur-xl rounded-2xl border border-primary/30 shadow-[var(--shadow-glow)] overflow-hidden">
+              {/* Header */}
+              <div className="p-6 sm:p-8 border-b border-primary/20">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="inline-flex items-center gap-2">
                     <div className="h-2 w-2 bg-primary rounded-full animate-pulse" />
                     <span className="text-sm font-mono-data text-primary uppercase tracking-wider">
                       System Active
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold mb-2">Scanning Target</h2>
-                  <p className="text-sm text-muted-foreground font-mono-data">
-                    {address}
-                  </p>
+                  <div className="flex gap-1">
+                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <div className="h-2 w-2 rounded-full bg-accent animate-pulse" style={{ animationDelay: "0.2s" }} />
+                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{ animationDelay: "0.4s" }} />
+                  </div>
                 </div>
+                <h2 className="text-2xl font-bold mb-2">Initiating Deep Scan</h2>
+                <p className="text-sm text-muted-foreground font-mono-data break-all">
+                  TARGET: {address}
+                </p>
+              </div>
 
-                {/* Scanning Steps */}
-                <div className="space-y-4">
-                  {scanSteps.map((step, idx) => {
-                    const Icon = step.icon;
-                    const isActive = idx === scanStep;
-                    const isComplete = idx < scanStep;
-                    
-                    return (
+              {/* WebGL Animation */}
+              <div className="relative bg-gradient-to-b from-primary/5 to-background">
+                <ScanningAnimation />
+              </div>
+
+              {/* Scanning Steps - Compact */}
+              <div className="p-6 sm:p-8 space-y-3">
+                {scanSteps.map((step, idx) => {
+                  const Icon = step.icon;
+                  const isActive = idx === scanStep;
+                  const isComplete = idx < scanStep;
+                  
+                  return (
+                    <div
+                      key={idx}
+                      className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-300 ${
+                        isActive
+                          ? "border-primary bg-primary/10 scale-[1.02]"
+                          : isComplete
+                          ? "border-border/50 bg-muted/20"
+                          : "border-border/20 opacity-50"
+                      }`}
+                    >
                       <div
-                        key={idx}
-                        className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 ${
+                        className={`p-1.5 rounded transition-colors ${
                           isActive
-                            ? "border-primary bg-primary/5 scale-105"
+                            ? "bg-primary/30 text-primary"
                             : isComplete
-                            ? "border-border/50 bg-muted/30"
-                            : "border-border/30 opacity-40"
+                            ? "bg-muted text-primary"
+                            : "bg-muted/50 text-muted-foreground"
                         }`}
                       >
-                        <div
-                          className={`p-2 rounded-lg transition-colors ${
-                            isActive
-                              ? "bg-primary/20 text-primary"
-                              : isComplete
-                              ? "bg-muted text-primary"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}
-                        >
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <span
-                          className={`flex-1 text-sm font-medium ${
-                            isActive || isComplete ? "text-foreground" : "text-muted-foreground"
-                          }`}
-                        >
-                          {step.text}
-                        </span>
-                        {isActive && (
-                          <div className="flex gap-1">
-                            <div className="h-2 w-2 bg-primary rounded-full animate-pulse" />
-                            <div className="h-2 w-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: "0.2s" }} />
-                            <div className="h-2 w-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: "0.4s" }} />
-                          </div>
-                        )}
-                        {isComplete && (
-                          <div className="h-2 w-2 bg-primary rounded-full" />
-                        )}
+                        <Icon className="h-4 w-4" />
                       </div>
-                    );
-                  })}
-                </div>
+                      <span
+                        className={`flex-1 text-xs font-mono-data ${
+                          isActive || isComplete ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        {step.text}
+                      </span>
+                      {isActive && (
+                        <div className="flex gap-0.5">
+                          <div className="h-1.5 w-1.5 bg-primary rounded-full animate-pulse" />
+                          <div className="h-1.5 w-1.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: "0.15s" }} />
+                          <div className="h-1.5 w-1.5 bg-primary rounded-full animate-pulse" style={{ animationDelay: "0.3s" }} />
+                        </div>
+                      )}
+                      {isComplete && (
+                        <div className="h-1.5 w-1.5 bg-primary rounded-full" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
 
-                {/* Scan Line Effect */}
-                <div className="relative h-1 bg-muted rounded-full overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary to-transparent scan-line" />
+              {/* Progress Bar */}
+              <div className="px-6 pb-6 sm:px-8 sm:pb-8">
+                <div className="relative h-2 bg-muted/50 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary via-accent to-primary rounded-full transition-all duration-500"
+                    style={{ width: `${((scanStep + 1) / scanSteps.length) * 100}%` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent scan-line" />
                 </div>
               </div>
             </div>
