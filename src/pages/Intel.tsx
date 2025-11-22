@@ -32,8 +32,10 @@ const Intel = () => {
   const address = searchParams.get("address") || "";
   const [locationData, setLocationData] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Mock billing data
   const billingItems = [
@@ -146,6 +148,16 @@ const Intel = () => {
     };
   }, [locationData]);
 
+  // Handle scroll to expand card
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollTop > 50 && !isExpanded) {
+      setIsExpanded(true);
+    } else if (target.scrollTop <= 10 && isExpanded) {
+      setIsExpanded(false);
+    }
+  };
+
   const getSeverityConfig = (severity: string) => {
     switch (severity) {
       case "high":
@@ -224,11 +236,21 @@ const Intel = () => {
       </header>
 
       {/* Scrollable Content Card - Starts at 1/3 height */}
-      <main className="fixed bottom-0 left-0 right-0 z-10 h-[67vh] overflow-y-auto">
-        <div className="container max-w-5xl mx-auto px-4 py-6 sm:py-8">
-          <div className="bg-card/95 backdrop-blur-xl rounded-t-2xl border border-b-0 border-border shadow-[0_-8px_32px_rgba(0,0,0,0.3)] min-h-full">
+      <main 
+        ref={contentRef}
+        onScroll={handleScroll}
+        className={`fixed bottom-0 left-0 right-0 z-10 overflow-y-auto transition-all duration-500 ease-out ${
+          isExpanded ? 'h-[calc(100vh-56px)] top-[56px]' : 'h-[67vh]'
+        }`}
+      >
+        <div className="bg-card/95 backdrop-blur-xl border-t border-border shadow-[0_-8px_32px_rgba(0,0,0,0.3)] min-h-full">
+            {/* Drag Handle */}
+            <div className="flex justify-center py-2">
+              <div className="w-12 h-1 bg-muted-foreground/30 rounded-full"></div>
+            </div>
+
             {/* Target Info Header */}
-            <div className="p-6 sm:p-8 border-b border-border/50">
+            <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 border-b border-border/50">
               <div className="flex items-start gap-3 mb-4">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <Home className="h-5 w-5 text-primary" />
@@ -282,7 +304,7 @@ const Intel = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 sm:p-8 bg-muted/20">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 sm:px-6 md:px-8 py-6 sm:py-8 bg-muted/20">
               <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Issues Detected</p>
                 <p className="text-3xl font-bold font-mono-data">{billingItems.length}</p>
@@ -300,7 +322,7 @@ const Intel = () => {
             </div>
 
             {/* Issues List */}
-            <div className="p-6 sm:p-8">
+            <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8">
               <div className="flex items-center gap-2 mb-6">
                 <AlertCircle className="h-5 w-5 text-primary" />
                 <h2 className="text-xl font-bold">Identified Issues</h2>
@@ -344,7 +366,6 @@ const Intel = () => {
               </div>
             </div>
           </div>
-        </div>
       </main>
     </div>
   );
