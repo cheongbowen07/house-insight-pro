@@ -4,7 +4,11 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, AlertTriangle, AlertCircle, Info, Home } from "lucide-react";
+import { ArrowLeft, AlertTriangle, AlertCircle, Info, Home, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { SniperDossier } from "@/types/sniper";
+import DossierDisplay from "@/components/DossierDisplay";
+import { useToast } from "@/hooks/use-toast";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -32,10 +36,13 @@ const Intel = () => {
   const address = searchParams.get("address") || "";
   const [locationData, setLocationData] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dossier, setDossier] = useState<SniperDossier | null>(null);
+  const [isLoadingDossier, setIsLoadingDossier] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   // Mock billing data
   const billingItems = [
@@ -112,6 +119,35 @@ const Intel = () => {
       fetchLocation();
     }
   }, [address]);
+
+  // Fetch property intelligence
+  useEffect(() => {
+    if (!address) return;
+
+    const fetchDossier = async () => {
+      setIsLoadingDossier(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('analyze-property', {
+          body: { address }
+        });
+
+        if (error) throw error;
+
+        setDossier(data);
+      } catch (error) {
+        console.error("Error fetching dossier:", error);
+        toast({
+          title: "Error Loading Intelligence",
+          description: error instanceof Error ? error.message : "Failed to analyze property",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoadingDossier(false);
+      }
+    };
+
+    fetchDossier();
+  }, [address, toast]);
 
   // Initialize Leaflet map - draggable but controls hidden
   useEffect(() => {
@@ -321,49 +357,60 @@ const Intel = () => {
               </div>
             </div>
 
-            {/* Issues List */}
+            {/* Property Intelligence */}
             <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8">
-              <div className="flex items-center gap-2 mb-6">
-                <AlertCircle className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-bold">Identified Issues</h2>
-              </div>
+              {isLoadingDossier ? (
+                <div className="flex flex-col items-center justify-center py-12 gap-4">
+                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                  <p className="text-muted-foreground">Analyzing property intelligence...</p>
+                </div>
+              ) : dossier ? (
+                <DossierDisplay data={dossier} />
+              ) : (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <AlertCircle className="h-5 w-5 text-primary" />
+                    <h2 className="text-xl font-bold">Identified Issues</h2>
+                  </div>
 
-              <div className="space-y-3">
-                {billingItems.map((item) => {
-                  const config = getSeverityConfig(item.severity);
-                  const Icon = config.icon;
+                  <div className="space-y-3">
+                    {billingItems.map((item) => {
+                      const config = getSeverityConfig(item.severity);
+                      const Icon = config.icon;
 
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-border bg-muted/30 hover:bg-muted/50 hover:border-primary/50 transition-all"
-                    >
-                      <div className="flex gap-3 flex-1">
-                        <div className={`p-2 rounded-lg ${config.bg} h-fit`}>
-                          <Icon className={`h-5 w-5 ${config.color}`} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-xs font-bold text-primary uppercase tracking-wide">
-                              {item.category}
-                            </span>
-                            <Badge variant={config.variant} className="text-xs">
-                              {config.label}
-                            </Badge>
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-border bg-muted/30 hover:bg-muted/50 hover:border-primary/50 transition-all"
+                        >
+                          <div className="flex gap-3 flex-1">
+                            <div className={`p-2 rounded-lg ${config.bg} h-fit`}>
+                              <Icon className={`h-5 w-5 ${config.color}`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-2 mb-1">
+                                <span className="text-xs font-bold text-primary uppercase tracking-wide">
+                                  {item.category}
+                                </span>
+                                <Badge variant={config.variant} className="text-xs">
+                                  {config.label}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-foreground mb-1">{item.issue}</p>
+                              <p className="text-xs font-mono-data text-muted-foreground">
+                                Risk: {item.risk}/10
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-sm text-foreground mb-1">{item.issue}</p>
-                          <p className="text-xs font-mono-data text-muted-foreground">
-                            Risk: {item.risk}/10
-                          </p>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold font-mono-data">£{item.cost.toLocaleString()}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold font-mono-data">£{item.cost.toLocaleString()}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
       </main>
