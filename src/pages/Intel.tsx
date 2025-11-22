@@ -1,23 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
-import { Icon } from "leaflet";
-import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MapPin, AlertTriangle, AlertCircle, Info, Navigation, Home } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Fix Leaflet default icon issue
-const customIcon = new Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+// Map rendering uses static OpenStreetMap image (no Leaflet runtime needed)
+
 
 interface LocationData {
   lat: string;
@@ -143,6 +132,12 @@ const Intel = () => {
     }
   };
 
+  const getStaticMapUrl = (lat: string, lon: string) => {
+    const zoom = 16;
+    const size = "800x400";
+    const marker = `${lat},${lon},red-pushpin`;
+    return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=${zoom}&size=${size}&markers=${marker}`;
+  };
   if (!address) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -253,34 +248,13 @@ const Intel = () => {
                   </div>
                 </div>
               ) : locationData ? (
-                <div className="h-[400px] rounded-lg overflow-hidden border border-border">
-                  <MapContainer
-                    center={[parseFloat(locationData.lat), parseFloat(locationData.lon)]}
-                    zoom={16}
-                    style={{ height: "100%", width: "100%" }}
-                    className="z-0"
-                  >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <Circle
-                      center={[parseFloat(locationData.lat), parseFloat(locationData.lon)]}
-                      radius={100}
-                      pathOptions={{ color: "hsl(210, 100%, 50%)", fillColor: "hsl(210, 100%, 50%)", fillOpacity: 0.1 }}
-                    />
-                    <Marker
-                      position={[parseFloat(locationData.lat), parseFloat(locationData.lon)]}
-                      icon={customIcon}
-                    >
-                      <Popup>
-                        <div className="text-sm">
-                          <p className="font-semibold mb-1">Target Location</p>
-                          <p className="text-xs text-muted-foreground">{locationData.display_name}</p>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  </MapContainer>
+                <div className="h-[400px] rounded-lg overflow-hidden border border-border bg-muted/40">
+                  <img
+                    src={getStaticMapUrl(locationData.lat, locationData.lon)}
+                    alt={`Map of ${locationData.display_name}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
               ) : (
                 <div className="h-[400px] bg-muted rounded-lg flex items-center justify-center">
