@@ -14,7 +14,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-
 interface LocationData {
   lat: string;
   lon: string;
@@ -199,8 +198,8 @@ const Intel = () => {
             ref={mapRef}
             className="fixed inset-0 z-0"
           />
-          {/* Dark overlay */}
-          <div className="fixed inset-0 z-[1] bg-background/70 backdrop-blur-[2px]" />
+          {/* Dark overlay but allow map interaction */}
+          <div className="fixed inset-0 z-[1] bg-background/40 backdrop-blur-[2px] pointer-events-none" />
         </>
       ) : (
         <div className="fixed inset-0 z-0 bg-gradient-to-br from-background via-background to-primary/5" />
