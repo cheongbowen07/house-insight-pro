@@ -4,8 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, AlertTriangle, AlertCircle, Info, Navigation, Home } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, AlertTriangle, AlertCircle, Info, Home } from "lucide-react";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -113,36 +112,31 @@ const Intel = () => {
     }
   }, [address]);
 
-  // Initialize Leaflet map as background (non-interactive)
+  // Initialize Leaflet map - draggable but controls hidden
   useEffect(() => {
     if (!locationData || !mapRef.current || mapInstanceRef.current) return;
 
     const lat = parseFloat(locationData.lat);
     const lon = parseFloat(locationData.lon);
 
-    // Create map (non-interactive)
+    // Create map (draggable, no visible controls)
     const map = L.map(mapRef.current, {
       center: [lat, lon],
       zoom: 15,
       zoomControl: false,
-      dragging: false,
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      keyboard: false,
-      touchZoom: false,
+      attributionControl: false,
     });
 
     mapInstanceRef.current = map;
 
     // Add tile layer with darker styling
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      attribution: '',
       maxZoom: 19,
     }).addTo(map);
 
     // Add marker
-    const marker = L.marker([lat, lon]).addTo(map);
+    L.marker([lat, lon]).addTo(map);
 
     // Cleanup
     return () => {
@@ -197,8 +191,8 @@ const Intel = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Fixed Map Background - Non-interactive */}
+    <div className="h-screen relative overflow-hidden">
+      {/* Fixed Map Background - Draggable */}
       {!loading && locationData ? (
         <>
           <div 
@@ -206,20 +200,20 @@ const Intel = () => {
             className="fixed inset-0 z-0"
           />
           {/* Dark overlay */}
-          <div className="fixed inset-0 z-[1] bg-background/80 backdrop-blur-sm" />
+          <div className="fixed inset-0 z-[1] bg-background/70 backdrop-blur-[2px]" />
         </>
       ) : (
         <div className="fixed inset-0 z-0 bg-gradient-to-br from-background via-background to-primary/5" />
       )}
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-card/95 backdrop-blur-xl">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
+      {/* Header - Fixed at top */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-card/95 backdrop-blur-xl">
+        <div className="container max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               onClick={() => navigate("/")}
-              className="gap-2"
+              className="gap-2 h-9"
             >
               <ArrowLeft className="h-4 w-4" />
               New Search
@@ -234,123 +228,125 @@ const Intel = () => {
         </div>
       </header>
 
-      {/* Main Content Card - Overlaying Map */}
-      <main className="relative z-10 container max-w-5xl mx-auto px-4 py-6 sm:py-8">
-        <div className="bg-card/95 backdrop-blur-xl rounded-2xl border border-border shadow-[var(--shadow-elevated)] overflow-hidden">
-          {/* Target Info Header */}
-          <div className="p-6 sm:p-8 border-b border-border/50">
-            <div className="flex items-start gap-3 mb-4">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Home className="h-5 w-5 text-primary" />
+      {/* Scrollable Content Card - Starts at 1/3 height */}
+      <main className="fixed bottom-0 left-0 right-0 z-10 h-[67vh] overflow-y-auto">
+        <div className="container max-w-5xl mx-auto px-4 py-6 sm:py-8">
+          <div className="bg-card/95 backdrop-blur-xl rounded-t-2xl border border-b-0 border-border shadow-[0_-8px_32px_rgba(0,0,0,0.3)] min-h-full">
+            {/* Target Info Header */}
+            <div className="p-6 sm:p-8 border-b border-border/50">
+              <div className="flex items-start gap-3 mb-4">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Home className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-1">Target Property</h1>
+                  <p className="text-sm sm:text-base text-muted-foreground font-mono-data">
+                    {address}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-1">Target Property</h1>
-                <p className="text-sm sm:text-base text-muted-foreground font-mono-data">
-                  {address}
-                </p>
+
+              {/* Location Details */}
+              {locationData?.address && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                  {locationData.address.road && (
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Street</p>
+                      <p className="text-sm font-medium">{locationData.address.road}</p>
+                    </div>
+                  )}
+                  {locationData.address.suburb && (
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Area</p>
+                      <p className="text-sm font-medium">{locationData.address.suburb}</p>
+                    </div>
+                  )}
+                  {locationData.address.city && (
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">City</p>
+                      <p className="text-sm font-medium">{locationData.address.city}</p>
+                    </div>
+                  )}
+                  {locationData.address.postcode && (
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Postcode</p>
+                      <p className="text-sm font-mono-data">{locationData.address.postcode}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {locationData && (
+                <div className="mt-4 pt-4 border-t border-border/50">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Coordinates</p>
+                  <p className="text-xs font-mono-data text-primary">
+                    {parseFloat(locationData.lat).toFixed(6)}, {parseFloat(locationData.lon).toFixed(6)}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 sm:p-8 bg-muted/20">
+              <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Issues Detected</p>
+                <p className="text-3xl font-bold font-mono-data">{billingItems.length}</p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Estimated Cost</p>
+                <p className="text-3xl font-bold font-mono-data">£{totalCost.toLocaleString()}</p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-card border border-border hover:border-destructive/50 transition-colors">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Risk Score</p>
+                <p className="text-3xl font-bold font-mono-data text-destructive">{avgRisk}/10</p>
               </div>
             </div>
 
-            {/* Location Details */}
-            {locationData?.address && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-                {locationData.address.road && (
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Street</p>
-                    <p className="text-sm font-medium">{locationData.address.road}</p>
-                  </div>
-                )}
-                {locationData.address.suburb && (
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Area</p>
-                    <p className="text-sm font-medium">{locationData.address.suburb}</p>
-                  </div>
-                )}
-                {locationData.address.city && (
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">City</p>
-                    <p className="text-sm font-medium">{locationData.address.city}</p>
-                  </div>
-                )}
-                {locationData.address.postcode && (
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Postcode</p>
-                    <p className="text-sm font-mono-data">{locationData.address.postcode}</p>
-                  </div>
-                )}
+            {/* Issues List */}
+            <div className="p-6 sm:p-8">
+              <div className="flex items-center gap-2 mb-6">
+                <AlertCircle className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Identified Issues</h2>
               </div>
-            )}
 
-            {locationData && (
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Coordinates</p>
-                <p className="text-xs font-mono-data text-primary">
-                  {parseFloat(locationData.lat).toFixed(6)}, {parseFloat(locationData.lon).toFixed(6)}
-                </p>
-              </div>
-            )}
-          </div>
+              <div className="space-y-3">
+                {billingItems.map((item) => {
+                  const config = getSeverityConfig(item.severity);
+                  const Icon = config.icon;
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 sm:p-8 bg-muted/20">
-            <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Issues Detected</p>
-              <p className="text-3xl font-bold font-mono-data">{billingItems.length}</p>
-            </div>
-
-            <div className="p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Estimated Cost</p>
-              <p className="text-3xl font-bold font-mono-data">£{totalCost.toLocaleString()}</p>
-            </div>
-
-            <div className="p-4 rounded-lg bg-card border border-border hover:border-destructive/50 transition-colors">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Risk Score</p>
-              <p className="text-3xl font-bold font-mono-data text-destructive">{avgRisk}/10</p>
-            </div>
-          </div>
-
-          {/* Issues List */}
-          <div className="p-6 sm:p-8">
-            <div className="flex items-center gap-2 mb-6">
-              <AlertCircle className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-bold">Identified Issues</h2>
-            </div>
-
-            <div className="space-y-3">
-              {billingItems.map((item) => {
-                const config = getSeverityConfig(item.severity);
-                const Icon = config.icon;
-
-                return (
-                  <div
-                    key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-border bg-muted/30 hover:bg-muted/50 hover:border-primary/50 transition-all"
-                  >
-                    <div className="flex gap-3 flex-1">
-                      <div className={`p-2 rounded-lg ${config.bg} h-fit`}>
-                        <Icon className={`h-5 w-5 ${config.color}`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <span className="text-xs font-bold text-primary uppercase tracking-wide">
-                            {item.category}
-                          </span>
-                          <Badge variant={config.variant} className="text-xs">
-                            {config.label}
-                          </Badge>
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-border bg-muted/30 hover:bg-muted/50 hover:border-primary/50 transition-all"
+                    >
+                      <div className="flex gap-3 flex-1">
+                        <div className={`p-2 rounded-lg ${config.bg} h-fit`}>
+                          <Icon className={`h-5 w-5 ${config.color}`} />
                         </div>
-                        <p className="text-sm text-foreground mb-1">{item.issue}</p>
-                        <p className="text-xs font-mono-data text-muted-foreground">
-                          Risk: {item.risk}/10
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="text-xs font-bold text-primary uppercase tracking-wide">
+                              {item.category}
+                            </span>
+                            <Badge variant={config.variant} className="text-xs">
+                              {config.label}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-foreground mb-1">{item.issue}</p>
+                          <p className="text-xs font-mono-data text-muted-foreground">
+                            Risk: {item.risk}/10
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold font-mono-data">£{item.cost.toLocaleString()}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold font-mono-data">£{item.cost.toLocaleString()}</p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
