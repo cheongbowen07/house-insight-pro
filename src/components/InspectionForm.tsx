@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
+import AddressPicker from "@/components/AddressPicker";
 
 interface InspectionFormProps {
   onSubmit: (data: { address: string; jobType: string }) => void;
@@ -45,14 +45,15 @@ const InspectionForm = ({ onSubmit }: InspectionFormProps) => {
           <Label htmlFor="address" className="text-sm font-medium">
             Property Address
           </Label>
-          <Input
-            id="address"
-            type="text"
-            placeholder="123 Main Street, City, State ZIP"
+          <AddressPicker
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={setAddress}
+            placeholder="Start typing an address (e.g., 10 Downing Street, London)"
             className="h-11"
           />
+          <p className="text-xs text-muted-foreground">
+            Type at least 3 characters to search UK addresses
+          </p>
         </div>
 
         <div className="space-y-2">
