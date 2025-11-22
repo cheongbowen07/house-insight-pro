@@ -62,17 +62,17 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10 backdrop-blur-sm bg-card/80">
-        <div className="container mx-auto px-4 py-4 sm:py-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Building2 className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+        <div className="px-3 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10">
+              <Building2 className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
+              <h1 className="text-base sm:text-2xl font-bold text-foreground tracking-tight">
                 Property Inspector Pro
               </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                Comprehensive property assessment & billing
+              <p className="text-[10px] sm:text-sm text-muted-foreground">
+                Comprehensive property assessment
               </p>
             </div>
           </div>
@@ -80,45 +80,45 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 sm:py-10 max-w-5xl">
+      <main className="px-3 py-4 sm:px-6 sm:py-10 max-w-5xl mx-auto">
         {/* Inspection Form */}
-        <div className="mb-8">
+        <div className="mb-4 sm:mb-8">
           <InspectionForm onSubmit={handleSubmit} />
         </div>
 
         {/* Results Section */}
         {showResults && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-card rounded-xl p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="bg-card rounded-xl p-3 sm:p-4 border border-border shadow-sm">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                  <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Location
                   </span>
                 </div>
-                <p className="text-sm font-semibold text-foreground truncate">
+                <p className="text-xs sm:text-sm font-semibold text-foreground truncate">
                   {inspectionData.address}
                 </p>
               </div>
-              <div className="bg-card rounded-xl p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <ClipboardList className="h-4 w-4 text-accent" />
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <div className="bg-card rounded-xl p-3 sm:p-4 border border-border shadow-sm">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                  <ClipboardList className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent flex-shrink-0" />
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Issues Found
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{billingItems.length}</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{billingItems.length}</p>
               </div>
-              <div className="bg-card rounded-xl p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <DollarSign className="h-4 w-4 text-accent" />
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <div className="bg-card rounded-xl p-3 sm:p-4 border border-border shadow-sm">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                  <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent flex-shrink-0" />
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Est. Total
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   ${totalCost.toLocaleString()}
                 </p>
               </div>

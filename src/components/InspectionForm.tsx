@@ -32,15 +32,15 @@ const InspectionForm = ({ onSubmit }: InspectionFormProps) => {
   };
 
   return (
-    <div className="bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-[var(--shadow-card)]">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground mb-2">Property Inspection</h2>
-        <p className="text-muted-foreground">
+    <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-border shadow-[var(--shadow-card)]">
+      <div className="mb-4 sm:mb-6">
+        <h2 className="text-lg sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Property Inspection</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Enter property details to generate a comprehensive assessment
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <div className="space-y-2">
           <Label htmlFor="address" className="text-sm font-medium">
             Property Address
@@ -169,9 +169,9 @@ const InspectionForm = ({ onSubmit }: InspectionFormProps) => {
 
         <Button 
           type="submit" 
-          className="w-full h-12 text-base font-semibold bg-gradient-to-r from-primary to-primary/90 hover:shadow-lg transition-all duration-300"
+          className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold bg-gradient-to-r from-primary to-primary/90 hover:shadow-lg transition-all duration-300"
         >
-          <Search className="mr-2 h-5 w-5" />
+          <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Generate Inspection Report
         </Button>
       </form>
