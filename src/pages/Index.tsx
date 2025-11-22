@@ -86,7 +86,7 @@ const Index = () => {
               </div>
             </div>
             <div>
-              <h1 className="text-lg sm:text-3xl font-display font-bold text-foreground tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-3xl font-display font-bold text-primary tracking-tight">
                 RenovateRight
               </h1>
               <p className="text-[10px] sm:text-sm text-muted-foreground font-medium">
