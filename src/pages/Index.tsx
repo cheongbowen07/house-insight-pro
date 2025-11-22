@@ -4,6 +4,8 @@ import InspectionForm from "@/components/InspectionForm";
 import LocationHistory from "@/components/LocationHistory";
 import BillingList from "@/components/BillingList";
 import TotalSummary from "@/components/TotalSummary";
+import NotificationSettings from "@/components/NotificationSettings";
+import { notifyNewInspection, notifyHighPriorityIssue } from "@/lib/notifications";
 
 const Index = () => {
   const [showResults, setShowResults] = useState(false);
@@ -15,6 +17,17 @@ const Index = () => {
   const handleSubmit = (data: { address: string; jobType: string }) => {
     setInspectionData(data);
     setShowResults(true);
+    
+    // Send notification for new inspection
+    notifyNewInspection(data.address);
+    
+    // Notify about high priority issues after a brief delay
+    setTimeout(() => {
+      const highPriorityItems = billingItems.filter(item => item.severity === 'high');
+      highPriorityItems.forEach(item => {
+        notifyHighPriorityIssue(item.issue, item.cost);
+      });
+    }, 2000);
   };
 
   // Mock data for demonstration
@@ -81,6 +94,11 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="px-3 py-4 sm:px-6 sm:py-10 max-w-5xl mx-auto">
+        {/* Notification Settings */}
+        <div className="mb-4 sm:mb-6">
+          <NotificationSettings />
+        </div>
+
         {/* Inspection Form */}
         <div className="mb-4 sm:mb-8">
           <InspectionForm onSubmit={handleSubmit} />
