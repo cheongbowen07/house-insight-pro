@@ -76,18 +76,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card sticky top-0 z-10 backdrop-blur-sm bg-card/80">
-        <div className="px-3 py-3 sm:px-6 sm:py-4">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10">
-              <Building2 className="h-5 w-5 sm:h-7 sm:w-7 text-primary" />
+      <header className="border-b border-border/50 bg-card/80 sticky top-0 z-10 backdrop-blur-xl">
+        <div className="px-3 py-4 sm:px-6 sm:py-5">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-xl blur-md opacity-40"></div>
+              <div className="relative p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
+                <Building2 className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
+              </div>
             </div>
             <div>
-              <h1 className="text-base sm:text-2xl font-bold text-foreground tracking-tight">
-                Property Inspector Pro
+              <h1 className="text-lg sm:text-3xl font-display font-bold text-foreground tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                RenovateRight
               </h1>
-              <p className="text-[10px] sm:text-sm text-muted-foreground">
-                Comprehensive property assessment
+              <p className="text-[10px] sm:text-sm text-muted-foreground font-medium">
+                Smart inspection & cost estimates
               </p>
             </div>
           </div>
@@ -108,39 +111,54 @@ const Index = () => {
 
         {/* Results Section */}
         {showResults && (
-          <div className="space-y-4 sm:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="space-y-4 sm:space-y-6 animate-slide-up">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-              <div className="bg-card rounded-xl p-3 sm:p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                  <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Location
-                  </span>
+              <div className="group relative bg-gradient-to-br from-card to-secondary rounded-2xl p-4 sm:p-5 border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 rounded-lg bg-primary/10">
+                      <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                    </div>
+                    <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Location
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-foreground truncate">
+                    {inspectionData.address}
+                  </p>
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-foreground truncate">
-                  {inspectionData.address}
-                </p>
               </div>
-              <div className="bg-card rounded-xl p-3 sm:p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                  <ClipboardList className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent flex-shrink-0" />
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Issues Found
-                  </span>
+              <div className="group relative bg-gradient-to-br from-card to-secondary rounded-2xl p-4 sm:p-5 border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 rounded-lg bg-accent/10">
+                      <ClipboardList className="h-4 w-4 text-accent flex-shrink-0" />
+                    </div>
+                    <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Issues Found
+                    </span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-display font-bold text-foreground">{billingItems.length}</p>
                 </div>
-                <p className="text-xl sm:text-2xl font-bold text-foreground">{billingItems.length}</p>
               </div>
-              <div className="bg-card rounded-xl p-3 sm:p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                  <DollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-accent flex-shrink-0" />
-                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Est. Total
-                  </span>
+              <div className="group relative bg-gradient-to-br from-card to-secondary rounded-2xl p-4 sm:p-5 border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 rounded-lg bg-accent/10">
+                      <DollarSign className="h-4 w-4 text-accent flex-shrink-0" />
+                    </div>
+                    <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Est. Total
+                    </span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-display font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    ${totalCost.toLocaleString()}
+                  </p>
                 </div>
-                <p className="text-xl sm:text-2xl font-bold text-foreground">
-                  ${totalCost.toLocaleString()}
-                </p>
               </div>
             </div>
 
