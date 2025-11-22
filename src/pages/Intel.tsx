@@ -1,11 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MapPin, AlertTriangle, AlertCircle, Info, Navigation, Home } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Map rendering uses static OpenStreetMap image (no Leaflet runtime needed)
+// Fix Leaflet default marker icon
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 
 interface LocationData {
@@ -26,6 +34,8 @@ const Intel = () => {
   const address = searchParams.get("address") || "";
   const [locationData, setLocationData] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(true);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   // Mock billing data
   const billingItems = [
@@ -103,6 +113,56 @@ const Intel = () => {
     }
   }, [address]);
 
+  // Initialize Leaflet map
+  useEffect(() => {
+    if (!locationData || !mapRef.current || mapInstanceRef.current) return;
+
+    const lat = parseFloat(locationData.lat);
+    const lon = parseFloat(locationData.lon);
+
+    // Create map
+    const map = L.map(mapRef.current, {
+      center: [lat, lon],
+      zoom: 16,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+
+    mapInstanceRef.current = map;
+
+    // Add tile layer
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Add circle radius
+    L.circle([lat, lon], {
+      radius: 100,
+      color: "hsl(210, 100%, 50%)",
+      fillColor: "hsl(210, 100%, 50%)",
+      fillOpacity: 0.1,
+      weight: 2,
+    }).addTo(map);
+
+    // Add marker
+    const marker = L.marker([lat, lon]).addTo(map);
+    marker.bindPopup(`
+      <div style="font-size: 14px;">
+        <p style="font-weight: 600; margin-bottom: 4px;">Target Location</p>
+        <p style="font-size: 12px; color: #666;">${locationData.display_name}</p>
+      </div>
+    `);
+
+    // Cleanup
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [locationData]);
+
   const getSeverityConfig = (severity: string) => {
     switch (severity) {
       case "high":
@@ -132,12 +192,6 @@ const Intel = () => {
     }
   };
 
-  const getStaticMapUrl = (lat: string, lon: string) => {
-    const zoom = 16;
-    const size = "800x400";
-    const marker = `${lat},${lon},red-pushpin`;
-    return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=${zoom}&size=${size}&markers=${marker}`;
-  };
   if (!address) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -248,14 +302,11 @@ const Intel = () => {
                   </div>
                 </div>
               ) : locationData ? (
-                <div className="h-[400px] rounded-lg overflow-hidden border border-border bg-muted/40">
-                  <img
-                    src={getStaticMapUrl(locationData.lat, locationData.lon)}
-                    alt={`Map of ${locationData.display_name}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
+                <div 
+                  ref={mapRef}
+                  className="h-[400px] rounded-lg overflow-hidden border border-border"
+                  style={{ zIndex: 0 }}
+                />
               ) : (
                 <div className="h-[400px] bg-muted rounded-lg flex items-center justify-center">
                   <p className="text-muted-foreground">Unable to load location data</p>
