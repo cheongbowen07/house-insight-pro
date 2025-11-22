@@ -122,18 +122,18 @@ const Landing = () => {
             </div>
           </div>
         ) : (
-          // Scanning Animation - Simplified
-          <div className="w-full max-w-4xl">
-            <div className="bg-card/95 backdrop-blur-xl rounded-2xl border border-primary/30 shadow-[var(--shadow-glow)] overflow-hidden">
-              {/* Header */}
-              <div className="p-6 sm:p-8 text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-2">Initiating Deep Scan</h2>
-              </div>
-
-              {/* WebGL Animation */}
-              <div className="relative bg-gradient-to-b from-primary/5 to-background">
-                <ScanningAnimation />
-              </div>
+          // Scanning Animation - Fullscreen
+          <div className="fixed inset-0 z-50 flex flex-col">
+            {/* WebGL Animation - Fullscreen */}
+            <div className="flex-1 relative bg-background">
+              <ScanningAnimation />
+            </div>
+            
+            {/* Title Overlay */}
+            <div className="absolute top-8 left-0 right-0 text-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                Initiating Deep Scan
+              </h2>
             </div>
           </div>
         )}

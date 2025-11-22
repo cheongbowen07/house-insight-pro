@@ -149,10 +149,10 @@ function DataStream({ position, color }: { position: [number, number, number]; c
 
 export default function ScanningAnimation() {
   return (
-    <div className="w-full h-[400px] relative">
+    <div className="w-full h-full absolute inset-0">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 50 }}
-        style={{ background: "transparent" }}
+        className="bg-gradient-to-b from-background via-primary/5 to-background"
       >
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={0.8} color="#0ea5e9" />
